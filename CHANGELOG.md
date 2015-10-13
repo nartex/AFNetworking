@@ -4,8 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [2.6.0](https://github.com/AFNetworking/AFNetworking/releases/tag/2.6.0) (08-18-2015)
-Released on Tuesday, August 18th, 2015. All issues associated with this milestone can be found using this [filter](https://github.com/AFNetworking/AFNetworking/issues?q=milestone%3A2.6.0+is%3Aclosed).
+## [2.6.0](https://github.com/AFNetworking/AFNetworking/releases/tag/2.6.0) (08-19-2015)
+Released on Wednesday, August 19th, 2015. All issues associated with this milestone can be found using this [filter](https://github.com/AFNetworking/AFNetworking/issues?q=milestone%3A2.6.0+is%3Aclosed).
 
 ###Important Upgrade Notes
 Please note the following API/project changes have been made:
@@ -19,7 +19,7 @@ Please note the following API/project changes have been made:
 	* Implemented by [bnickel](https://github.com/bnickel) in [#2737](https://github.com/AFNetworking/AFNetworking/pull/2737).
 * This release now supports watchOS 2.0, which relys on target conditionals that are only present in Xcode 7 and iOS 9/watchOS 2.0/OS X 10.10. If you install the library using CocoaPods, AFNetworking will define these target conditionals for on older platforms, allowing your code to complile. If you do not use Cocoapods, you will need to add the following code your to PCH file.
 
- ```
+```
 #ifndef TARGET_OS_IOS
   #define TARGET_OS_IOS TARGET_OS_IPHONE
 #endif
@@ -27,6 +27,9 @@ Please note the following API/project changes have been made:
   #define TARGET_OS_WATCH 0
 #endif
 ```
+* This release migrates query parameter serialization to model AlamoFire and adhere to RFC standards. Note that `/` and `?` are no longer encoded by default.
+	* Implemented by [Kevin Harwood](https://github.com/kcharwood) in [#2908](https://github.com/AFNetworking/AFNetworking/pull/2908).
+
 
 
 **Note** that support for `NSURLConnection` based API's will be removed in a future update. If you have not already done so, it is recommended that you transition to the `NSURLSession` APIs in the very near future.

@@ -152,8 +152,9 @@ NSArray * AFQueryStringPairsFromKeyAndValue(NSString *key, id value) {
         }
     } else if ([value isKindOfClass:[NSArray class]]) {
         NSArray *array = value;
-        for (id nestedValue in array) {
-            [mutableQueryStringComponents addObjectsFromArray:AFQueryStringPairsFromKeyAndValue([NSString stringWithFormat:@"%@[]", key], nestedValue)];
+        for (NSUInteger i = 0; i < array.count; i++) {
+            id nestedValue = array[i];
+            [mutableQueryStringComponents addObjectsFromArray:AFQueryStringPairsFromKeyAndValue([NSString stringWithFormat:@"%@[%d]", key, i++], nestedValue)];
         }
     } else if ([value isKindOfClass:[NSSet class]]) {
         NSSet *set = value;
@@ -499,8 +500,8 @@ forHTTPHeaderField:(NSString *)field
         }
     }];
 
+    NSString *query = nil;
     if (parameters) {
-        NSString *query = nil;
         if (self.queryStringSerialization) {
             NSError *serializationError;
             query = self.queryStringSerialization(request, parameters, &serializationError);
@@ -519,15 +520,21 @@ forHTTPHeaderField:(NSString *)field
                     break;
             }
         }
+    }
 
-        if ([self.HTTPMethodsEncodingParametersInURI containsObject:[[request HTTPMethod] uppercaseString]]) {
+    if ([self.HTTPMethodsEncodingParametersInURI containsObject:[[request HTTPMethod] uppercaseString]]) {
+        if (query) {
             mutableRequest.URL = [NSURL URLWithString:[[mutableRequest.URL absoluteString] stringByAppendingFormat:mutableRequest.URL.query ? @"&%@" : @"?%@", query]];
-        } else {
-            if (![mutableRequest valueForHTTPHeaderField:@"Content-Type"]) {
-                [mutableRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-            }
-            [mutableRequest setHTTPBody:[query dataUsingEncoding:self.stringEncoding]];
         }
+    } else {
+        // #2864: an empty string is a valid x-www-form-urlencoded payload
+        if (!query) {
+            query = @"";
+        }
+        if (![mutableRequest valueForHTTPHeaderField:@"Content-Type"]) {
+            [mutableRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+        }
+        [mutableRequest setHTTPBody:[query dataUsingEncoding:self.stringEncoding]];
     }
 
     return mutableRequest;
