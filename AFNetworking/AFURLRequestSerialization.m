@@ -509,11 +509,7 @@ forHTTPHeaderField:(NSString *)field
     }
 
     if ([self.HTTPMethodsEncodingParametersInURI containsObject:[[request HTTPMethod] uppercaseString]]) {
-<<<<<<< HEAD
-        if (query) {
-=======
         if (query && query.length > 0) {
->>>>>>> 4f3c694920ed0f5d3a8e180aacaf3af40c2efb4a
             mutableRequest.URL = [NSURL URLWithString:[[mutableRequest.URL absoluteString] stringByAppendingFormat:mutableRequest.URL.query ? @"&%@" : @"?%@", query]];
         }
     } else {
